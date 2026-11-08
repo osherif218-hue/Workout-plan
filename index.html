@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en"><head>
 <meta charset="utf-8">
+<script>try{var t=localStorage.getItem("wl_theme");if(t==="light"||t==="dark")document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Workout Log</title>
 <meta name="theme-color" content="#111827">
@@ -53,9 +54,10 @@ input{font:inherit;color:var(--ink);background:var(--inp);border:1px solid var(-
 .menu{background:var(--card);border-radius:18px;padding:14px;max-width:420px;width:100%}.menu h4{margin:0 0 10px;text-align:center;font-size:15px}
 .opts{display:flex;gap:8px}.opt{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:6px;background:var(--inp);border:2px solid var(--line);border-radius:14px;padding:8px 4px;color:var(--ink)}
 .opt b{font-size:14px}.opt img{height:110px;max-width:100%;object-fit:contain}.opt.on{border-color:var(--cy)}
+.gear{background:none;border:0;color:#fff;padding:6px;display:flex;align-items:center}.sec{font-size:12px;font-weight:700;color:var(--mut);margin:2px 2px 6px}.hint{margin:10px 2px 0;font-size:12px;color:var(--mut)}
 .empty{text-align:center;color:var(--mut);margin:30px 0}
 </style></head><body>
-<div class="top"><div class="by">by: Omar Sherif</div><img src="icon-192.png" alt=""><h1 id="t">Workout Log<small id="sub">Full body split</small></h1><button class="back" id="back" hidden>&#8249; Weeks</button></div>
+<div class="top"><div class="by">by: Omar Sherif</div><img src="icon-192.png" alt=""><h1 id="t">Workout Log<small id="sub">Full body split</small></h1><button class="back" id="back" hidden>&#8249; Weeks</button><button class="gear" id="gear" aria-label="Settings"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button></div>
 <div id="ins" class="ins" hidden></div><main id="app"></main><div class="ov" id="ov" hidden><div class="menu" id="mn"></div></div><div class="sv" id="sv">Saved</div>
 <script>
 var PLAN={
@@ -83,6 +85,12 @@ function menu(){var cur=charId(),ov=$("ov");
  $("mn").innerHTML='<h4>Choose your character</h4><div class="opts">'+CK.map(function(k){return'<button class="opt'+(k===cur?" on":"")+'" data-c="'+k+'"><b>'+CH[k].n+'</b><img src="'+CH[k].img+'" alt=""></button>'}).join("")+'</div>';
  ov.hidden=false;ov.onclick=function(e){if(e.target===ov)ov.hidden=true};
  Array.prototype.forEach.call($("mn").querySelectorAll(".opt"),function(b){b.onclick=function(){try{localStorage.setItem("wl_char",b.getAttribute("data-c"))}catch(e){}ov.hidden=true;home()}})}
+function theme(){try{var t=localStorage.getItem("wl_theme");if(t==="light"||t==="dark")return t}catch(e){}return"auto"}
+function applyTheme(){var t=theme(),r=document.documentElement;if(t==="auto")r.removeAttribute("data-theme");else r.setAttribute("data-theme",t)}
+function settings(){var cur=theme(),ov=$("ov");
+ $("mn").innerHTML='<h4>Settings</h4><div class="sec">THEME</div><div class="opts">'+[["light","Light"],["dark","Dark"],["auto","Auto"]].map(function(o){return'<button class="opt'+(o[0]===cur?" on":"")+'" data-t="'+o[0]+'"><b>'+o[1]+'</b></button>'}).join("")+'</div><p class="hint">Auto follows your phone setting.</p>';
+ ov.hidden=false;ov.onclick=function(e){if(e.target===ov)ov.hidden=true};
+ Array.prototype.forEach.call($("mn").querySelectorAll(".opt"),function(b){b.onclick=function(){try{localStorage.setItem("wl_theme",b.getAttribute("data-t"))}catch(e){}applyTheme();settings()}})}
 function home(){view=null;$("back").hidden=true;$("sub").textContent="Full body split";
  var h='<div class="toprow"><button class="charbtn" id="chb"><img src="'+CH[charId()].img+'" alt=""><span>Choose your character</span></button><button class="btn" id="new">+ New week</button></div><div id="nw"></div>';var ws=sorted();
  if(!ws.length)h+='<p class="empty">No weeks yet. Tap "New week" and pick the date you start Full Body A.</p>';
@@ -113,7 +121,7 @@ function draw(){var w=wk(view),d=w.days[tab],P=PLAN[tab];
  $("dt").onchange=function(){d.date=this.value;save();draw()};
  Array.prototype.forEach.call(app.querySelectorAll(".ex input"),function(inp){inp.oninput=function(){var i=inp.getAttribute("data-i");d.ex[i]=d.ex[i]||{};d.ex[i][inp.getAttribute("data-f")]=inp.value;save()}});
  $("del").onclick=function(){if(confirm("Delete the week of "+fmt(w.start)+"?")){S.weeks=S.weeks.filter(function(o){return o.id!==w.id});save();home()}}}
-$("back").onclick=home;
+$("back").onclick=home;$("gear").onclick=settings;applyTheme();
 load();home();
 (function(){var box=$("ins"),dp=null;
  function standalone(){return window.matchMedia("(display-mode: standalone)").matches||navigator.standalone===true}
