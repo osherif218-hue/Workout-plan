@@ -42,10 +42,12 @@ input{font:inherit;color:var(--ink);background:var(--inp);border:1px solid var(-
 .del{background:none;border:0;color:var(--red);font-weight:700;margin-top:18px;width:100%;padding:10px}
 .sv{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(14px + env(safe-area-inset-bottom,0px));background:#111827;color:#fff;border-radius:99px;padding:6px 14px;font-size:12px;opacity:0;transition:.3s}
 .sv.show{opacity:.95}
+.ins{background:var(--card);border-bottom:1px solid var(--line);padding:10px 14px;display:flex;align-items:center;gap:10px;font-size:14px}.ins span{flex:1}.ins button{border:0;border-radius:10px;padding:9px 14px;font-weight:700;font-size:14px;background:var(--cy);color:#06222a}.ins .x{background:none;color:var(--mut);padding:6px 8px}
+.hero{display:flex;align-items:flex-end;gap:14px;border-bottom:3px solid var(--cy);margin:0 0 14px;padding:0 4px}.hero img{height:150px;width:auto;display:block;margin-bottom:-1px}.hero div{padding-bottom:12px}.hero em{font-style:normal;background:var(--cy);color:#06222a;font-weight:800;font-size:11px;border-radius:99px;padding:2px 9px}.hero h2{margin:6px 0 0;font-size:26px;line-height:1.1}.hero p{margin:4px 0 0;color:var(--mut);font-size:13px}
 .empty{text-align:center;color:var(--mut);margin:30px 0}
 </style></head><body>
 <div class="top"><img src="icon-192.png" alt=""><h1 id="t">Workout Log<small id="sub">Full body split</small></h1><button class="back" id="back" hidden>&#8249; Weeks</button></div>
-<main id="app"></main><div class="sv" id="sv">Saved</div>
+<div id="ins" hidden></div><main id="app"></main><div class="sv" id="sv">Saved</div>
 <script>
 var PLAN={
 A:{n:"Full Body A",rest:"1 rest day",ex:[["DB lateral raises",2,2],["DB Flat Chest Press",3,1],["T-Bar Row",2,1],["Cable Rear Delt fly",1,1],["WG lat pulldown",1,1],["SA Triceps Pushdown",1,1],["Face Away curl",3,1],["Leg Press",2,1],["Seated leg curl",1,1],["Leg extension",1,1],["Shoulder Press",1,1]]},
@@ -81,7 +83,7 @@ function home(){view=null;$("back").hidden=true;$("sub").textContent="Full body 
 function prev(w,k,i){var best=null;S.weeks.forEach(function(o){if(o.id!==w.id&&o.start<w.start&&o.days[k]&&o.days[k].ex[i]&&o.days[k].ex[i].w&&(!best||o.start>best.start))best=o});return best?best.days[k].ex[i].w:""}
 function open(id){view=id;$("back").hidden=false;var w=wk(id);$("sub").textContent="Week of "+fmt(w.start);draw()}
 function draw(){var w=wk(view),d=w.days[tab],P=PLAN[tab];
- var h='<div class="tabs">'+KEYS.map(function(k){return'<button class="tab'+(k===tab?" sel":"")+'" data-k="'+k+'">'+PLAN[k].n.replace("Full Body ","Day ")+'<br><small>'+fmt(w.days[k].date)+'</small></button>'}).join("")+'</div>';
+ var n=KEYS.filter(function(k){return filled(w,k)}).length;var h='<div class="hero"><img src="figure.png" alt=""><div><em>WEEK</em><h2>'+fmt(w.start)+'</h2><p>'+n+' of 3 days logged</p></div></div><div class="tabs">'+KEYS.map(function(k){return'<button class="tab'+(k===tab?" sel":"")+'" data-k="'+k+'">'+PLAN[k].n.replace("Full Body ","Day ")+'<br><small>'+fmt(w.days[k].date)+'</small></button>'}).join("")+'</div>';
  h+='<div class="datebar"><label>'+P.n+' date</label><input type="date" id="dt" value="'+d.date+'"></div>';
  P.ex.forEach(function(x,i){var e=d.ex[i]||{},pw=prev(w,tab,i);
   h+='<div class="ex"><h3><i>'+(i+1)+'</i>'+esc(x[0])+'</h3><div class="chips"><span class="chip">Warm-up '+x[1]+'</span><span class="chip r">Working '+x[2]+'</span></div><div class="g">'
@@ -97,5 +99,17 @@ function draw(){var w=wk(view),d=w.days[tab],P=PLAN[tab];
  $("del").onclick=function(){if(confirm("Delete the week of "+fmt(w.start)+"?")){S.weeks=S.weeks.filter(function(o){return o.id!==w.id});save();home()}}}
 $("back").onclick=home;
 load();home();
+(function(){var box=$("ins"),dp=null;
+ function standalone(){return window.matchMedia("(display-mode: standalone)").matches||navigator.standalone===true}
+ function hide(){box.hidden=true;try{localStorage.setItem("wl_ins_off","1")}catch(e){}}
+ function off(){try{return localStorage.getItem("wl_ins_off")==="1"}catch(e){return false}}
+ if(standalone()||off())return;
+ window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();dp=e;
+  box.innerHTML='<span>Install this app on your home screen</span><button id="ib">Install app</button><button class="x" id="ix">&#10005;</button>';box.hidden=false;
+  $("ib").onclick=function(){dp.prompt();dp.userChoice.then(function(){box.hidden=true;dp=null})};$("ix").onclick=hide});
+ window.addEventListener("appinstalled",function(){box.hidden=true});
+ var ios=/iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
+ if(ios){box.innerHTML='<span>To install: tap the <b>Share</b> button, then <b>Add to Home Screen</b>.</span><button class="x" id="ix">Got it</button>';box.hidden=false;$("ix").onclick=hide}
+})();
 if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){})});
 </script></body></html>
