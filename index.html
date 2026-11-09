@@ -60,6 +60,7 @@ input{font:inherit;color:var(--ink);background:var(--inp);border:1px solid var(-
 .demo .d1{animation:dm1 2.4s steps(1,end) infinite}.demo .d2{animation:dm2 2.4s steps(1,end) infinite}
 @keyframes dm1{0%{opacity:1}50%{opacity:0}100%{opacity:1}}@keyframes dm2{0%{opacity:0}50%{opacity:1}100%{opacity:0}}
 @media (prefers-reduced-motion:reduce){.demo .d1{animation:none}.demo .d2{display:none}}
+.g.two{grid-template-columns:1fr 1fr}
 .empty{text-align:center;color:var(--mut);margin:30px 0}
 </style></head><body>
 <div class="top"><div class="by">by: Omar Sherif</div><img src="icon-192.png" alt=""><h1 id="t">Workout Log<small id="sub">Full body split</small></h1><button class="back" id="back" hidden>&#8249; Weeks</button><button class="gear" id="gear" aria-label="Settings"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button></div>
@@ -116,10 +117,10 @@ function draw(){var w=wk(view),d=w.days[tab],P=PLAN[tab];
  var n=KEYS.filter(function(k){return filled(w,k)}).length;var h='<div class="hero"><img src="'+CH[charId()].img+'" alt=""><div><em>WEEK</em><h2>'+fmt(w.start)+'</h2><p>'+n+' of 3 days logged</p></div></div><div class="tabs">'+KEYS.map(function(k){return'<button class="tab'+(k===tab?" sel":"")+'" data-k="'+k+'">'+PLAN[k].n.replace("Full Body ","Day ")+'<br><small>'+fmt(w.days[k].date)+'</small></button>'}).join("")+'</div>';
  h+='<div class="datebar"><label>'+P.n+' date</label><input type="date" id="dt" value="'+d.date+'"></div>';
  P.ex.forEach(function(x,i){var e=d.ex[i]||{},pw=prev(w,tab,i);
-  var dm=DEMO[x[0]];h+='<div class="ex"><div class="eh"><div class="et"><h3><i>'+(i+1)+'</i>'+esc(x[0])+'</h3><div class="chips"><span class="chip">Warm-up '+x[1]+'</span><span class="chip r">Working '+x[2]+'</span></div></div>'+(dm?'<div class="demo"><img class="d1" src="'+dm[0]+'" alt=""><img class="d2" src="'+dm[1]+'" alt=""></div>':'')+'</div><div class="g">'
+  var dm=DEMO[x[0]];h+='<div class="ex"><div class="eh"><div class="et"><h3><i>'+(i+1)+'</i>'+esc(x[0])+'</h3><div class="chips"><span class="chip">Warm-up '+x[1]+'</span><span class="chip r">Working '+x[2]+'</span></div></div>'+(dm?'<div class="demo"><img class="d1" src="'+dm[0]+'" alt=""><img class="d2" src="'+dm[1]+'" alt=""></div>':'')+'</div><div class="g'+(x[2]>1?'':' two')+'">'
   +'<div><label>First set</label><input data-i="'+i+'" data-f="a" inputmode="decimal" value="'+esc(e.a)+'"></div>'
   +'<div><label>Weight (kg)</label><input data-i="'+i+'" data-f="w" inputmode="decimal" placeholder="'+(pw?"last "+esc(pw):"")+'" value="'+esc(e.w)+'"></div>'
-  +'<div><label>Second set</label><input data-i="'+i+'" data-f="b" inputmode="decimal" value="'+esc(e.b)+'"></div></div>'
+  +(x[2]>1?'<div><label>Second set</label><input data-i="'+i+'" data-f="b" inputmode="decimal" value="'+esc(e.b)+'"></div>':'')+'</div>'
   +'<div class="n"><input data-i="'+i+'" data-f="n" placeholder="Notes" value="'+esc(e.n)+'"></div></div>'});
  h+='<div class="rest"><span>THEN: '+P.rest.toUpperCase()+'</span><b>REST &amp; RECOVER</b></div><button class="del" id="del">Delete this week</button>';
  app.innerHTML=h;window.scrollTo(0,0);
