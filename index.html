@@ -85,7 +85,7 @@ function save(){S.t=Date.now();try{localStorage.setItem(LS,JSON.stringify(S));fl
 function wk(id){for(var i=0;i<S.weeks.length;i++)if(S.weeks[i].id===id)return S.weeks[i]}
 function sorted(){return S.weeks.slice().sort(function(a,b){return a.start<b.start?1:-1})}
 function filled(w,k){var d=w.days[k];if(!d)return false;for(var i in d.ex){var e=d.ex[i];if(e&&(e.a||e.w||e.b))return true}return false}
-var DEMO={"DB lateral raises":["lat-down.png","lat-up.png","96px","3/4"],"DB Flat Chest Press":["chest-down.png","chest-up.png","140px","420/327"],"DB biceps curl":["biceps-down.png","biceps-up.png","118px","360/451"]};
+var DEMO={"DB lateral raises":["lat-down.png","lat-up.png","96px","3/4"],"DB Flat Chest Press":["chest-down.png","chest-up.png","140px","420/327"],"DB biceps curl":["biceps-down.png","biceps-up.png","118px","360/451"],"T-Bar Row":["tbar-down.png","tbar-up.png","124px","360/373"]};
 var CH={omar:{n:"Omar",img:"figure.png"},ziad:{n:"Ziad",img:"ziad.png"},dardiry:{n:"Dardiry",img:"dardiry.png"}},CK=["omar","ziad","dardiry"];
 function charId(){try{var c=localStorage.getItem("wl_char");if(c&&CH[c])return c}catch(e){}return"omar"}
 function menu(){var cur=charId(),ov=$("ov");
