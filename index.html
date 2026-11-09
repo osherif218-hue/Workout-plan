@@ -67,7 +67,7 @@ input{font:inherit;color:var(--ink);background:var(--inp);border:1px solid var(-
 <div id="ins" class="ins" hidden></div><main id="app"></main><div class="ov" id="ov" hidden><div class="menu" id="mn"></div></div><div class="sv" id="sv">Saved</div>
 <script>
 var PLAN={
-A:{n:"Full Body A",rest:"1 rest day",ex:[["DB lateral raises",2,2],["DB Flat Chest Press",3,1],["T-Bar Row",2,1],["Cable Rear Delt fly",1,1],["WG lat pulldown",1,1],["SA Triceps Pushdown",1,1],["Face Away curl",1,1],["Leg Press",3,1],["Seated leg curl",1,1],["Shoulder Press",1,1]]},
+A:{n:"Full Body A",rest:"1 rest day",ex:[["DB lateral raises",2,2],["DB Flat Chest Press",3,1],["T-Bar Row",2,1],["Cable Rear Delt fly",1,1],["WG lat pulldown",1,1],["SA Triceps Pushdown",1,1],["Face Away curl",3,1],["Leg Press",2,1],["Seated leg curl",1,1],["Leg extension",1,1],["Shoulder Press",1,1]]},
 B:{n:"Full Body B",rest:"2 rest days",ex:[["SA Cable lateral raises",2,1],["T-Bar Row",2,1],["Cable Rear Delt fly",1,1],["Inclined chest press machine",2,1],["NG Lat row",1,1],["Overhead Triceps extension",2,2],["Face away curl",2,1],["Wide chest press machine",2,1],["WG lat pulldown",2,1],["Leg Extension",2,1],["Seated leg curl",1,2],["Leg press calf raises",2,2],["Smith shrugs",1,1]]},
 C:{n:"Full Body C",rest:"1 rest day",ex:[["SA Cable lateral raises",2,1],["DB Flat Chest Press",3,1],["T-Bar Row",2,1],["DB biceps curl",1,2],["NG Lat row",1,1],["SA Triceps Pushdown",1,1],["Leg press calf raises",1,1],["Leg extension",2,1],["Seated leg curl",2,1],["reverse curl",0,1],["wrist curl",0,1]]}};
 var OFF={A:0,B:2,C:5},KEYS=["A","B","C"],LS="wl_state_v1";
@@ -85,9 +85,8 @@ function save(){S.t=Date.now();try{localStorage.setItem(LS,JSON.stringify(S));fl
 function wk(id){for(var i=0;i<S.weeks.length;i++)if(S.weeks[i].id===id)return S.weeks[i]}
 function sorted(){return S.weeks.slice().sort(function(a,b){return a.start<b.start?1:-1})}
 function filled(w,k){var d=w.days[k];if(!d)return false;for(var i in d.ex){var e=d.ex[i];if(e&&(e.a||e.w||e.b))return true}return false}
-var DEMO={"db lateral raises":["lat-down.png","lat-up.png","96px","3/4"],"db flat chest press":["chest-down.png","chest-up.png","140px","420/327"],"db biceps curl":["biceps-down.png","biceps-up.png","118px","360/451"],"t-bar row":["tbar-down.png","tbar-up.png","124px","360/373"],
-"ng lat row":["nglat-relaxed.png","nglat-pulled.png","140px","420/403"],"sa triceps pushdown":["tri-relaxed.png","tri-extended.png","88px","243/420"],"face away curl":["curl-relaxed.png","curl-bended.png","100px","279/420"],"shoulder press":["shpress-down.png","shpress-up.png","104px","292/420"],"wg lat pulldown":["wg-up.png","wg-down.png","101px","282/420"]};
-var CH={omar:{n:"Omar",img:"figure.png"},ziad:{n:"Ziad",img:"ziad.png"},dardiry:{n:"Dardiry",img:"dardiry.png"}},CK=["omar","ziad","dardiry"];
+var DEMO={"db lateral raises":["lat-down.png","lat-up.png","96px","3/4"],"db flat chest press":["chest-down.png","chest-up.png","140px","420/327"],"db biceps curl":["biceps-down.png","biceps-up.png","118px","360/451"],"t-bar row":["tbar-down.png","tbar-up.png","124px","360/373"],"wg lat pulldown":["wglat-down.png","wglat-up.png","101px","283/420"],"shoulder press":["shoulder-down.png","shoulder-up.png","105px","295/420"],"face away curl":["facecurl-down.png","facecurl-up.png","101px","284/420"],"ng lat row":["nglat-down.png","nglat-up.png","140px","420/398"],"sa triceps pushdown":["triceps-down.png","triceps-up.png","86px","242/420"]};
+var CH={omar:{n:"Omar",img:"figure.png"},ziad:{n:"Ziad",img:"ziad.png"},dardiry:{n:"Dardiry",img:"dardiry.png"},jamal:{n:"Jamal",img:"jamal.png"}},CK=["omar","ziad","dardiry","jamal"];
 function charId(){try{var c=localStorage.getItem("wl_char");if(c&&CH[c])return c}catch(e){}return"omar"}
 function menu(){var cur=charId(),ov=$("ov");
  $("mn").innerHTML='<h4>Choose your character</h4><div class="opts">'+CK.map(function(k){return'<button class="opt'+(k===cur?" on":"")+'" data-c="'+k+'"><b>'+CH[k].n+'</b><img src="'+CH[k].img+'" alt=""></button>'}).join("")+'</div>';
@@ -107,7 +106,7 @@ function home(){view=null;$("back").hidden=true;$("sub").textContent="Full body 
  app.innerHTML=h;
  $("exp").onclick=function(){var b=new Blob([JSON.stringify(S)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(b);a.download="workout-backup-"+iso(new Date())+".json";document.body.appendChild(a);a.click();a.remove()};
  $("imp").onclick=function(){$("imf").click()};
- $("imf").onchange=function(){var f=this.files[0];if(!f)return;var r=new FileReader();r.onload=function(){try{var o=JSON.parse(r.result);if(o&&o.weeks){S=o;migrate();save();home()}else flash("Invalid file")}catch(e){flash("Invalid file")}};r.readAsText(f)};
+ $("imf").onchange=function(){var f=this.files[0];if(!f)return;var r=new FileReader();r.onload=function(){try{var o=JSON.parse(r.result);if(o&&o.weeks){S=o;save();home()}else flash("Invalid file")}catch(e){flash("Invalid file")}};r.readAsText(f)};
  $("chb").onclick=menu;
  $("new").onclick=function(){$("nw").innerHTML='<div class="datebar" style="margin-top:10px"><label>Start of Full Body A</label><input type="date" id="nd" value="'+iso(new Date())+'"></div><button class="btn" id="mk">Create week</button>';
   $("mk").onclick=function(){var d=$("nd").value;if(!d)return;var w={id:"w"+Date.now(),start:d,days:{}};KEYS.forEach(function(k){w.days[k]={date:addDays(d,OFF[k]),ex:{}}});S.weeks.push(w);save();open(w.id)}};
@@ -118,7 +117,7 @@ function draw(){var w=wk(view),d=w.days[tab],P=PLAN[tab];
  var n=KEYS.filter(function(k){return filled(w,k)}).length;var h='<div class="hero"><img src="'+CH[charId()].img+'" alt=""><div><em>WEEK</em><h2>'+fmt(w.start)+'</h2><p>'+n+' of 3 days logged</p></div></div><div class="tabs">'+KEYS.map(function(k){return'<button class="tab'+(k===tab?" sel":"")+'" data-k="'+k+'">'+PLAN[k].n.replace("Full Body ","Day ")+'<br><small>'+fmt(w.days[k].date)+'</small></button>'}).join("")+'</div>';
  h+='<div class="datebar"><label>'+P.n+' date</label><input type="date" id="dt" value="'+d.date+'"></div>';
  P.ex.forEach(function(x,i){var e=d.ex[i]||{},pw=prev(w,tab,i);
-  var dm=DEMO[x[0].toLowerCase()];h+='<div class="ex"><div class="eh"><div class="et"><h3><i>'+(i+1)+'</i>'+esc(x[0])+'</h3><div class="chips"><span class="chip">Warm-up '+x[1]+'</span><span class="chip r">Working '+x[2]+'</span></div></div>'+(dm?'<div class="demo" style="--w:'+dm[2]+';--r:'+dm[3]+'"><img class="d1" src="'+dm[0]+'" alt=""><img class="d2" src="'+dm[1]+'" alt=""></div>':'')+'</div><div class="g'+(x[2]>1?'':' two')+'">'
+  var dm=DEMO[String(x[0]).toLowerCase()];h+='<div class="ex"><div class="eh"><div class="et"><h3><i>'+(i+1)+'</i>'+esc(x[0])+'</h3><div class="chips"><span class="chip">Warm-up '+x[1]+'</span><span class="chip r">Working '+x[2]+'</span></div></div>'+(dm?'<div class="demo" style="--w:'+dm[2]+';--r:'+dm[3]+'"><img class="d1" src="'+dm[0]+'" alt=""><img class="d2" src="'+dm[1]+'" alt=""></div>':'')+'</div><div class="g'+(x[2]>1?'':' two')+'">'
   +'<div><label>First set</label><input data-i="'+i+'" data-f="a" inputmode="decimal" value="'+esc(e.a)+'"></div>'
   +'<div><label>Weight (kg)</label><input data-i="'+i+'" data-f="w" inputmode="decimal" placeholder="'+(pw?"last "+esc(pw):"")+'" value="'+esc(e.w)+'"></div>'
   +(x[2]>1?'<div><label>Second set</label><input data-i="'+i+'" data-f="b" inputmode="decimal" value="'+esc(e.b)+'"></div>':'')+'</div>'
@@ -130,8 +129,7 @@ function draw(){var w=wk(view),d=w.days[tab],P=PLAN[tab];
  Array.prototype.forEach.call(app.querySelectorAll(".ex input"),function(inp){inp.oninput=function(){var i=inp.getAttribute("data-i");d.ex[i]=d.ex[i]||{};d.ex[i][inp.getAttribute("data-f")]=inp.value;save()}});
  $("del").onclick=function(){if(confirm("Delete the week of "+fmt(w.start)+"?")){S.weeks=S.weeks.filter(function(o){return o.id!==w.id});save();home()}}}
 $("back").onclick=home;$("gear").onclick=settings;applyTheme();
-function migrate(){if((S.v||0)>=2)return;S.weeks.forEach(function(w){var d=w.days&&w.days.A;if(d&&d.ex){if(d.ex[10]!==undefined)d.ex[9]=d.ex[10];else delete d.ex[9];delete d.ex[10]}});S.v=2;try{localStorage.setItem(LS,JSON.stringify(S))}catch(e){}}
-load();migrate();home();
+load();home();
 (function(){var box=$("ins"),dp=null;
  function standalone(){return window.matchMedia("(display-mode: standalone)").matches||navigator.standalone===true}
  function hide(){box.hidden=true;try{localStorage.setItem("wl_ins_off","1")}catch(e){}}
