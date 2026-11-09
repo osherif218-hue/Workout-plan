@@ -35,7 +35,7 @@ main{max-width:640px;margin:0 auto;padding:14px 14px 80px}
 input{font:inherit;color:var(--ink);background:var(--inp);border:1px solid var(--line);border-radius:10px;padding:10px;width:100%}
 .ex{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px;margin-bottom:10px}
 .ex h3{margin:0 0 6px;font-size:16px}.ex h3 i{color:var(--mut);font-style:normal;font-weight:400;margin-right:6px}
-.chips{display:flex;gap:6px;margin-bottom:8px}.chip{font-size:12px;font-weight:700;padding:3px 9px;border-radius:99px;background:var(--line);color:var(--ink)}
+.chips{display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap}.chip{font-size:12px;font-weight:700;padding:3px 9px;border-radius:99px;background:var(--line);color:var(--ink)}
 .chip.r{background:var(--red);color:#fff}
 .g{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}.g label{font-size:11px;color:var(--mut);font-weight:700;display:block;margin-bottom:2px}
 .n{margin-top:8px}
@@ -56,7 +56,7 @@ input{font:inherit;color:var(--ink);background:var(--inp);border:1px solid var(-
 .opt b{font-size:14px}.opt img{height:110px;max-width:100%;object-fit:contain}.opt.on{border-color:var(--cy)}
 .gear{background:none;border:0;color:#fff;padding:6px;display:flex;align-items:center}.sec{font-size:12px;font-weight:700;color:var(--mut);margin:2px 2px 6px}.hint{margin:10px 2px 0;font-size:12px;color:var(--mut)}
 .eh{display:flex;gap:8px;align-items:flex-start;justify-content:space-between}.et{flex:1;min-width:0}
-.demo{position:relative;width:96px;height:128px;flex:none;margin:-4px 0 4px}.demo img{position:absolute;left:0;top:0;width:100%;height:100%;object-fit:contain;pointer-events:none}
+.demo{position:relative;width:var(--w,96px);aspect-ratio:var(--r,3/4);flex:none;margin:-4px 0 4px}.demo img{position:absolute;left:0;top:0;width:100%;height:100%;object-fit:contain;pointer-events:none}
 .demo .d1{animation:dm1 2.4s steps(1,end) infinite}.demo .d2{animation:dm2 2.4s steps(1,end) infinite}
 @keyframes dm1{0%{opacity:1}50%{opacity:0}100%{opacity:1}}@keyframes dm2{0%{opacity:0}50%{opacity:1}100%{opacity:0}}
 @media (prefers-reduced-motion:reduce){.demo .d1{animation:none}.demo .d2{display:none}}
@@ -85,7 +85,7 @@ function save(){S.t=Date.now();try{localStorage.setItem(LS,JSON.stringify(S));fl
 function wk(id){for(var i=0;i<S.weeks.length;i++)if(S.weeks[i].id===id)return S.weeks[i]}
 function sorted(){return S.weeks.slice().sort(function(a,b){return a.start<b.start?1:-1})}
 function filled(w,k){var d=w.days[k];if(!d)return false;for(var i in d.ex){var e=d.ex[i];if(e&&(e.a||e.w||e.b))return true}return false}
-var DEMO={"DB lateral raises":["lat-down.png","lat-up.png"]};
+var DEMO={"DB lateral raises":["lat-down.png","lat-up.png","96px","3/4"],"DB Flat Chest Press":["chest-down.png","chest-up.png","140px","420/327"]};
 var CH={omar:{n:"Omar",img:"figure.png"},ziad:{n:"Ziad",img:"ziad.png"},dardiry:{n:"Dardiry",img:"dardiry.png"}},CK=["omar","ziad","dardiry"];
 function charId(){try{var c=localStorage.getItem("wl_char");if(c&&CH[c])return c}catch(e){}return"omar"}
 function menu(){var cur=charId(),ov=$("ov");
@@ -117,7 +117,7 @@ function draw(){var w=wk(view),d=w.days[tab],P=PLAN[tab];
  var n=KEYS.filter(function(k){return filled(w,k)}).length;var h='<div class="hero"><img src="'+CH[charId()].img+'" alt=""><div><em>WEEK</em><h2>'+fmt(w.start)+'</h2><p>'+n+' of 3 days logged</p></div></div><div class="tabs">'+KEYS.map(function(k){return'<button class="tab'+(k===tab?" sel":"")+'" data-k="'+k+'">'+PLAN[k].n.replace("Full Body ","Day ")+'<br><small>'+fmt(w.days[k].date)+'</small></button>'}).join("")+'</div>';
  h+='<div class="datebar"><label>'+P.n+' date</label><input type="date" id="dt" value="'+d.date+'"></div>';
  P.ex.forEach(function(x,i){var e=d.ex[i]||{},pw=prev(w,tab,i);
-  var dm=DEMO[x[0]];h+='<div class="ex"><div class="eh"><div class="et"><h3><i>'+(i+1)+'</i>'+esc(x[0])+'</h3><div class="chips"><span class="chip">Warm-up '+x[1]+'</span><span class="chip r">Working '+x[2]+'</span></div></div>'+(dm?'<div class="demo"><img class="d1" src="'+dm[0]+'" alt=""><img class="d2" src="'+dm[1]+'" alt=""></div>':'')+'</div><div class="g'+(x[2]>1?'':' two')+'">'
+  var dm=DEMO[x[0]];h+='<div class="ex"><div class="eh"><div class="et"><h3><i>'+(i+1)+'</i>'+esc(x[0])+'</h3><div class="chips"><span class="chip">Warm-up '+x[1]+'</span><span class="chip r">Working '+x[2]+'</span></div></div>'+(dm?'<div class="demo" style="--w:'+dm[2]+';--r:'+dm[3]+'"><img class="d1" src="'+dm[0]+'" alt=""><img class="d2" src="'+dm[1]+'" alt=""></div>':'')+'</div><div class="g'+(x[2]>1?'':' two')+'">'
   +'<div><label>First set</label><input data-i="'+i+'" data-f="a" inputmode="decimal" value="'+esc(e.a)+'"></div>'
   +'<div><label>Weight (kg)</label><input data-i="'+i+'" data-f="w" inputmode="decimal" placeholder="'+(pw?"last "+esc(pw):"")+'" value="'+esc(e.w)+'"></div>'
   +(x[2]>1?'<div><label>Second set</label><input data-i="'+i+'" data-f="b" inputmode="decimal" value="'+esc(e.b)+'"></div>':'')+'</div>'
