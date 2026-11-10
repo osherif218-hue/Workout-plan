@@ -53,7 +53,7 @@ input{font:inherit;color:var(--ink);background:var(--inp);border:1px solid var(-
 .ov{position:fixed;left:0;right:0;top:0;bottom:0;background:rgba(0,0,0,.55);z-index:20;display:flex;align-items:center;justify-content:center;padding:16px}
 .menu{background:var(--card);border-radius:18px;padding:14px;max-width:420px;width:100%}.menu h4{margin:0 0 10px;text-align:center;font-size:15px}
 .opts{display:flex;gap:8px}.opt{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:6px;background:var(--inp);border:2px solid var(--line);border-radius:14px;padding:8px 4px;color:var(--ink)}
-.opt b{font-size:14px}.opt img{height:110px;max-width:100%;object-fit:contain}.opt.on{border-color:var(--cy)}
+.opt b{font-size:13px}.opt img{height:110px;max-width:100%;object-fit:contain}.opt.on{border-color:var(--cy)}
 .gear{background:none;border:0;color:#fff;padding:6px;display:flex;align-items:center}.sec{font-size:12px;font-weight:700;color:var(--mut);margin:2px 2px 6px}.hint{margin:10px 2px 0;font-size:12px;color:var(--mut)}
 .eh{display:flex;gap:8px;align-items:flex-start;justify-content:space-between}.et{flex:1;min-width:0}
 .demo{position:relative;width:var(--w,96px);aspect-ratio:var(--r,3/4);flex:none;margin:-4px 0 4px}.demo img{position:absolute;left:0;top:0;width:100%;height:100%;object-fit:contain;pointer-events:none}
@@ -87,7 +87,7 @@ function sorted(){return S.weeks.slice().sort(function(a,b){return a.start<b.sta
 function filled(w,k){var d=w.days[k];if(!d)return false;for(var i in d.ex){var e=d.ex[i];if(e&&(e.a||e.w||e.b))return true}return false}
 var DEMO={"db lateral raises":["lat-down.png","lat-up.png","96px","3/4"],"db flat chest press":["chest-down.png","chest-up.png","140px","420/327"],"db biceps curl":["biceps-down.png","biceps-up.png","118px","360/451"],"t-bar row":["tbar-down.png","tbar-up.png","124px","360/373"],
 "ng lat row":["nglat-relaxed.png","nglat-pulled.png","140px","420/403"],"sa triceps pushdown":["tri-relaxed.png","tri-extended.png","88px","243/420"],"face away curl":["curl-relaxed.png","curl-bended.png","100px","279/420"],"shoulder press":["shpress-down.png","shpress-up.png","104px","292/420"],"wg lat pulldown":["wg-up.png","wg-down.png","101px","282/420"]};
-var CH={omar:{n:"Omar",img:"figure.png"},ziad:{n:"Ziad",img:"ziad.png"},dardiry:{n:"Dardiry",img:"dardiry.png"}},CK=["omar","ziad","dardiry"];
+var CH={omar:{n:"Omar",img:"figure.png"},ziad:{n:"Ziad",img:"ziad.png"},dardiry:{n:"Dardiry",img:"dardiry.png"},jamal:{n:"Jamal",img:"jamal.png"}},CK=["omar","ziad","dardiry","jamal"];
 function charId(){try{var c=localStorage.getItem("wl_char");if(c&&CH[c])return c}catch(e){}return"omar"}
 function menu(){var cur=charId(),ov=$("ov");
  $("mn").innerHTML='<h4>Choose your character</h4><div class="opts">'+CK.map(function(k){return'<button class="opt'+(k===cur?" on":"")+'" data-c="'+k+'"><b>'+CH[k].n+'</b><img src="'+CH[k].img+'" alt=""></button>'}).join("")+'</div>';
