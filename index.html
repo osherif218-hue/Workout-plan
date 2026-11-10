@@ -68,7 +68,10 @@ input{font:inherit;color:var(--ink);background:var(--inp);border:1px solid var(-
 .ov{animation:ovin .22s ease}.menu{animation:mnin .28s cubic-bezier(.2,.8,.2,1)}
 .ov.out{animation:ovout .18s ease forwards;pointer-events:none}.ov.out .menu{animation:mnout .18s ease forwards}
 #nw>*{animation:dn .28s cubic-bezier(.2,.8,.2,1)}.ins:not([hidden]){animation:dn .3s ease}
-@media (prefers-reduced-motion:reduce){.ov,.menu,.ov.out,.ov.out .menu,#nw>*,.ins{animation:none!important}}
+@media (prefers-reduced-motion:reduce){.ov,.menu,.ov.out,.ov.out .menu,#nw>*,.ins,#app.in-f,#app.in-b{animation:none!important}}
+@keyframes inf{from{opacity:0;transform:translateX(28px)}to{opacity:1;transform:none}}
+@keyframes inb{from{opacity:0;transform:translateX(-20px)}to{opacity:1;transform:none}}
+#app.in-f{animation:inf .26s cubic-bezier(.2,.8,.2,1)}#app.in-b{animation:inb .24s cubic-bezier(.2,.8,.2,1)}
 .empty{text-align:center;color:var(--mut);margin:30px 0}
 </style></head><body>
 <div class="top"><div class="by">by: Omar Sherif</div><img src="icon-192.png" alt=""><h1 id="t">Workout Log<small id="sub">Full body split</small></h1><button class="back" id="back" hidden>&#8249; Weeks</button><button class="gear" id="gear" aria-label="Settings"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button></div>
@@ -111,7 +114,9 @@ function settings(){var cur=theme(),ov=$("ov");
  $("mn").innerHTML='<h4>Settings</h4><div class="sec">THEME</div><div class="opts">'+[["light","Light"],["dark","Dark"],["auto","Auto"]].map(function(o){return'<button class="opt'+(o[0]===cur?" on":"")+'" data-t="'+o[0]+'"><b>'+o[1]+'</b></button>'}).join("")+'</div><p class="hint">Auto follows your phone setting.</p>';
  showOv();ov.onclick=function(e){if(e.target===ov)closeOv()};
  Array.prototype.forEach.call($("mn").querySelectorAll(".opt"),function(b){b.onclick=function(){try{localStorage.setItem("wl_theme",b.getAttribute("data-t"))}catch(e){}applyTheme();settings()}})}
-function home(){view=null;$("back").hidden=true;$("sub").textContent="Full body split";
+function anim(c){var a=$("app");a.classList.remove("in-f","in-b");void a.offsetWidth;a.classList.add(c);setTimeout(function(){a.classList.remove(c)},300)}
+function home(){var w=view!==null;homeR();if(w)anim("in-b")}
+function homeR(){view=null;$("back").hidden=true;$("sub").textContent="Full body split";
  var h='<div class="toprow"><button class="charbtn" id="chb"><img src="'+CH[charId()].img+'" alt=""><span>Choose your character</span></button><button class="btn" id="new">+ New week</button></div><div id="nw"></div>';var ws=sorted();
  if(!ws.length)h+='<p class="empty">No weeks yet. Tap "New week" and pick the date you start Full Body A.</p>';
  ws.forEach(function(w){h+='<div class="week" data-id="'+w.id+'"><div><b>Week of '+fmt(w.start)+'</b><span>'+KEYS.map(function(k){return fmt(w.days[k].date)}).join(" · ")+'</span></div><div class="dots">'+KEYS.map(function(k){return'<div class="dot'+(filled(w,k)?" on":"")+'">'+k+'</div>'}).join("")+'</div></div>'});
@@ -125,7 +130,7 @@ function home(){view=null;$("back").hidden=true;$("sub").textContent="Full body 
   $("mk").onclick=function(){var d=$("nd").value;if(!d)return;var w={id:"w"+Date.now(),start:d,days:{}};KEYS.forEach(function(k){w.days[k]={date:addDays(d,OFF[k]),ex:{}}});S.weeks.push(w);save();open(w.id)}};
  Array.prototype.forEach.call(app.querySelectorAll(".week"),function(e){e.onclick=function(){open(e.getAttribute("data-id"))}})}
 function prev(w,k,i){var best=null;S.weeks.forEach(function(o){if(o.id!==w.id&&o.start<w.start&&o.days[k]&&o.days[k].ex[i]&&o.days[k].ex[i].w&&(!best||o.start>best.start))best=o});return best?best.days[k].ex[i].w:""}
-function open(id,nopush){if(!nopush){try{history.pushState({v:"week",id:id},"")}catch(e){}}view=id;$("back").hidden=false;var w=wk(id);$("sub").textContent="Week of "+fmt(w.start);draw()}
+function open(id,nopush){var fh=view===null;if(!nopush){try{history.pushState({v:"week",id:id},"")}catch(e){}}view=id;$("back").hidden=false;var w=wk(id);$("sub").textContent="Week of "+fmt(w.start);draw();if(fh)anim("in-f")}
 function draw(){var w=wk(view),d=w.days[tab],P=PLAN[tab];
  var n=KEYS.filter(function(k){return filled(w,k)}).length;var h='<div class="hero"><img src="'+CH[charId()].img+'" alt=""><div><em>WEEK</em><h2>'+fmt(w.start)+'</h2><p>'+n+' of 3 days logged</p></div></div><div class="tabs">'+KEYS.map(function(k){return'<button class="tab'+(k===tab?" sel":"")+'" data-k="'+k+'">'+PLAN[k].n.replace("Full Body ","Day ")+'<br><small>'+fmt(w.days[k].date)+'</small></button>'}).join("")+'</div>';
  h+='<div class="datebar"><label>'+P.n+' date</label><input type="date" id="dt" value="'+d.date+'"></div>';
