@@ -97,16 +97,19 @@ var DEMO={"db lateral raises":["lat-down.png","lat-up.png","96px","3/4"],"db fla
 "ng lat row":["nglat-relaxed.png","nglat-pulled.png","140px","420/403"],"sa triceps pushdown":["tri-relaxed.png","tri-extended.png","88px","243/420"],"face away curl":["curl-relaxed.png","curl-bended.png","100px","279/420"],"shoulder press":["shpress-down.png","shpress-up.png","104px","292/420"],"wg lat pulldown":["wg-up.png","wg-down.png","101px","282/420"]};
 var CH={omar:{n:"Omar",img:"figure.png"},ziad:{n:"Ziad",img:"ziad.png"},dardiry:{n:"Dardiry",img:"dardiry.png"},jamal:{n:"Jamal",img:"jamal.png"}},CK=["omar","ziad","dardiry","jamal"];
 function charId(){try{var c=localStorage.getItem("wl_char");if(c&&CH[c])return c}catch(e){}return"omar"}
-function closeOv(){var ov=$("ov");if(ov.hidden||ov.classList.contains("out"))return;ov.classList.add("out");setTimeout(function(){ov.hidden=true;ov.classList.remove("out")},180)}
+var ovPushed=false,ignorePop=false;
+function showOv(){var ov=$("ov");if(!ovPushed){try{history.pushState({ov:1},"")}catch(e){}ovPushed=true}ov.classList.remove("out");ov.hidden=false}
+function closeOv(fromPop){var ov=$("ov");if(ov.hidden||ov.classList.contains("out"))return;ov.classList.add("out");setTimeout(function(){ov.hidden=true;ov.classList.remove("out")},180);if(!fromPop&&ovPushed){ovPushed=false;ignorePop=true;try{history.back()}catch(e){ignorePop=false}}}
+function goHome(){if(history.state&&history.state.v==="week"){try{history.back();return}catch(e){}}home()}
 function menu(){var cur=charId(),ov=$("ov");
  $("mn").innerHTML='<h4>Choose your character</h4><div class="opts">'+CK.map(function(k){return'<button class="opt'+(k===cur?" on":"")+'" data-c="'+k+'"><b>'+CH[k].n+'</b><img src="'+CH[k].img+'" alt=""></button>'}).join("")+'</div>';
- ov.classList.remove("out");ov.hidden=false;ov.onclick=function(e){if(e.target===ov)closeOv()};
+ showOv();ov.onclick=function(e){if(e.target===ov)closeOv()};
  Array.prototype.forEach.call($("mn").querySelectorAll(".opt"),function(b){b.onclick=function(){try{localStorage.setItem("wl_char",b.getAttribute("data-c"))}catch(e){}closeOv();home()}})}
 function theme(){try{var t=localStorage.getItem("wl_theme");if(t==="light"||t==="dark")return t}catch(e){}return"auto"}
 function applyTheme(){var t=theme(),r=document.documentElement;if(t==="auto")r.removeAttribute("data-theme");else r.setAttribute("data-theme",t)}
 function settings(){var cur=theme(),ov=$("ov");
  $("mn").innerHTML='<h4>Settings</h4><div class="sec">THEME</div><div class="opts">'+[["light","Light"],["dark","Dark"],["auto","Auto"]].map(function(o){return'<button class="opt'+(o[0]===cur?" on":"")+'" data-t="'+o[0]+'"><b>'+o[1]+'</b></button>'}).join("")+'</div><p class="hint">Auto follows your phone setting.</p>';
- ov.classList.remove("out");ov.hidden=false;ov.onclick=function(e){if(e.target===ov)closeOv()};
+ showOv();ov.onclick=function(e){if(e.target===ov)closeOv()};
  Array.prototype.forEach.call($("mn").querySelectorAll(".opt"),function(b){b.onclick=function(){try{localStorage.setItem("wl_theme",b.getAttribute("data-t"))}catch(e){}applyTheme();settings()}})}
 function home(){view=null;$("back").hidden=true;$("sub").textContent="Full body split";
  var h='<div class="toprow"><button class="charbtn" id="chb"><img src="'+CH[charId()].img+'" alt=""><span>Choose your character</span></button><button class="btn" id="new">+ New week</button></div><div id="nw"></div>';var ws=sorted();
@@ -122,7 +125,7 @@ function home(){view=null;$("back").hidden=true;$("sub").textContent="Full body 
   $("mk").onclick=function(){var d=$("nd").value;if(!d)return;var w={id:"w"+Date.now(),start:d,days:{}};KEYS.forEach(function(k){w.days[k]={date:addDays(d,OFF[k]),ex:{}}});S.weeks.push(w);save();open(w.id)}};
  Array.prototype.forEach.call(app.querySelectorAll(".week"),function(e){e.onclick=function(){open(e.getAttribute("data-id"))}})}
 function prev(w,k,i){var best=null;S.weeks.forEach(function(o){if(o.id!==w.id&&o.start<w.start&&o.days[k]&&o.days[k].ex[i]&&o.days[k].ex[i].w&&(!best||o.start>best.start))best=o});return best?best.days[k].ex[i].w:""}
-function open(id){view=id;$("back").hidden=false;var w=wk(id);$("sub").textContent="Week of "+fmt(w.start);draw()}
+function open(id,nopush){if(!nopush){try{history.pushState({v:"week",id:id},"")}catch(e){}}view=id;$("back").hidden=false;var w=wk(id);$("sub").textContent="Week of "+fmt(w.start);draw()}
 function draw(){var w=wk(view),d=w.days[tab],P=PLAN[tab];
  var n=KEYS.filter(function(k){return filled(w,k)}).length;var h='<div class="hero"><img src="'+CH[charId()].img+'" alt=""><div><em>WEEK</em><h2>'+fmt(w.start)+'</h2><p>'+n+' of 3 days logged</p></div></div><div class="tabs">'+KEYS.map(function(k){return'<button class="tab'+(k===tab?" sel":"")+'" data-k="'+k+'">'+PLAN[k].n.replace("Full Body ","Day ")+'<br><small>'+fmt(w.days[k].date)+'</small></button>'}).join("")+'</div>';
  h+='<div class="datebar"><label>'+P.n+' date</label><input type="date" id="dt" value="'+d.date+'"></div>';
@@ -137,10 +140,18 @@ function draw(){var w=wk(view),d=w.days[tab],P=PLAN[tab];
  Array.prototype.forEach.call(app.querySelectorAll(".tab"),function(b){b.onclick=function(){tab=b.getAttribute("data-k");draw()}});
  $("dt").onchange=function(){d.date=this.value;save();draw()};
  Array.prototype.forEach.call(app.querySelectorAll(".ex input"),function(inp){inp.oninput=function(){var i=inp.getAttribute("data-i");d.ex[i]=d.ex[i]||{};d.ex[i][inp.getAttribute("data-f")]=inp.value;save()}});
- $("del").onclick=function(){if(confirm("Delete the week of "+fmt(w.start)+"?")){S.weeks=S.weeks.filter(function(o){return o.id!==w.id});save();home()}}}
-$("back").onclick=home;$("gear").onclick=settings;applyTheme();
+ $("del").onclick=function(){if(confirm("Delete the week of "+fmt(w.start)+"?")){S.weeks=S.weeks.filter(function(o){return o.id!==w.id});save();goHome()}}}
+$("back").onclick=goHome;$("gear").onclick=settings;applyTheme();
 function migrate(){if((S.v||0)>=2)return;S.weeks.forEach(function(w){var d=w.days&&w.days.A;if(d&&d.ex){if(d.ex[10]!==undefined)d.ex[9]=d.ex[10];else delete d.ex[9];delete d.ex[10]}});S.v=2;try{localStorage.setItem(LS,JSON.stringify(S))}catch(e){}}
 load();migrate();home();
+try{history.replaceState({v:"home"},"")}catch(e){}
+window.addEventListener("popstate",function(e){
+ if(ignorePop){ignorePop=false;return}
+ var ov=$("ov");
+ if(!ov.hidden&&!ov.classList.contains("out")){ovPushed=false;closeOv(true);return}
+ var st=e.state;
+ if(st&&st.ov)return;
+ if(st&&st.v==="week"&&wk(st.id))open(st.id,true);else home()});
 (function(){var box=$("ins"),dp=null;
  function standalone(){return window.matchMedia("(display-mode: standalone)").matches||navigator.standalone===true}
  function hide(){box.hidden=true;try{localStorage.setItem("wl_ins_off","1")}catch(e){}}
