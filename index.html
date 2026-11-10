@@ -61,6 +61,14 @@ input{font:inherit;color:var(--ink);background:var(--inp);border:1px solid var(-
 @keyframes dm1{0%{opacity:1}50%{opacity:0}100%{opacity:1}}@keyframes dm2{0%{opacity:0}50%{opacity:1}100%{opacity:0}}
 @media (prefers-reduced-motion:reduce){.demo .d1{animation:none}.demo .d2{display:none}}
 .g.two{grid-template-columns:1fr 1fr}
+@keyframes ovin{from{opacity:0}to{opacity:1}}@keyframes ovout{from{opacity:1}to{opacity:0}}
+@keyframes mnin{from{opacity:0;transform:translateY(14px) scale(.96)}to{opacity:1;transform:none}}
+@keyframes mnout{from{opacity:1;transform:none}to{opacity:0;transform:translateY(10px) scale(.97)}}
+@keyframes dn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
+.ov{animation:ovin .22s ease}.menu{animation:mnin .28s cubic-bezier(.2,.8,.2,1)}
+.ov.out{animation:ovout .18s ease forwards;pointer-events:none}.ov.out .menu{animation:mnout .18s ease forwards}
+#nw>*{animation:dn .28s cubic-bezier(.2,.8,.2,1)}.ins:not([hidden]){animation:dn .3s ease}
+@media (prefers-reduced-motion:reduce){.ov,.menu,.ov.out,.ov.out .menu,#nw>*,.ins{animation:none!important}}
 .empty{text-align:center;color:var(--mut);margin:30px 0}
 </style></head><body>
 <div class="top"><div class="by">by: Omar Sherif</div><img src="icon-192.png" alt=""><h1 id="t">Workout Log<small id="sub">Full body split</small></h1><button class="back" id="back" hidden>&#8249; Weeks</button><button class="gear" id="gear" aria-label="Settings"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button></div>
@@ -89,15 +97,16 @@ var DEMO={"db lateral raises":["lat-down.png","lat-up.png","96px","3/4"],"db fla
 "ng lat row":["nglat-relaxed.png","nglat-pulled.png","140px","420/403"],"sa triceps pushdown":["tri-relaxed.png","tri-extended.png","88px","243/420"],"face away curl":["curl-relaxed.png","curl-bended.png","100px","279/420"],"shoulder press":["shpress-down.png","shpress-up.png","104px","292/420"],"wg lat pulldown":["wg-up.png","wg-down.png","101px","282/420"]};
 var CH={omar:{n:"Omar",img:"figure.png"},ziad:{n:"Ziad",img:"ziad.png"},dardiry:{n:"Dardiry",img:"dardiry.png"},jamal:{n:"Jamal",img:"jamal.png"}},CK=["omar","ziad","dardiry","jamal"];
 function charId(){try{var c=localStorage.getItem("wl_char");if(c&&CH[c])return c}catch(e){}return"omar"}
+function closeOv(){var ov=$("ov");if(ov.hidden||ov.classList.contains("out"))return;ov.classList.add("out");setTimeout(function(){ov.hidden=true;ov.classList.remove("out")},180)}
 function menu(){var cur=charId(),ov=$("ov");
  $("mn").innerHTML='<h4>Choose your character</h4><div class="opts">'+CK.map(function(k){return'<button class="opt'+(k===cur?" on":"")+'" data-c="'+k+'"><b>'+CH[k].n+'</b><img src="'+CH[k].img+'" alt=""></button>'}).join("")+'</div>';
- ov.hidden=false;ov.onclick=function(e){if(e.target===ov)ov.hidden=true};
- Array.prototype.forEach.call($("mn").querySelectorAll(".opt"),function(b){b.onclick=function(){try{localStorage.setItem("wl_char",b.getAttribute("data-c"))}catch(e){}ov.hidden=true;home()}})}
+ ov.classList.remove("out");ov.hidden=false;ov.onclick=function(e){if(e.target===ov)closeOv()};
+ Array.prototype.forEach.call($("mn").querySelectorAll(".opt"),function(b){b.onclick=function(){try{localStorage.setItem("wl_char",b.getAttribute("data-c"))}catch(e){}closeOv();home()}})}
 function theme(){try{var t=localStorage.getItem("wl_theme");if(t==="light"||t==="dark")return t}catch(e){}return"auto"}
 function applyTheme(){var t=theme(),r=document.documentElement;if(t==="auto")r.removeAttribute("data-theme");else r.setAttribute("data-theme",t)}
 function settings(){var cur=theme(),ov=$("ov");
  $("mn").innerHTML='<h4>Settings</h4><div class="sec">THEME</div><div class="opts">'+[["light","Light"],["dark","Dark"],["auto","Auto"]].map(function(o){return'<button class="opt'+(o[0]===cur?" on":"")+'" data-t="'+o[0]+'"><b>'+o[1]+'</b></button>'}).join("")+'</div><p class="hint">Auto follows your phone setting.</p>';
- ov.hidden=false;ov.onclick=function(e){if(e.target===ov)ov.hidden=true};
+ ov.classList.remove("out");ov.hidden=false;ov.onclick=function(e){if(e.target===ov)closeOv()};
  Array.prototype.forEach.call($("mn").querySelectorAll(".opt"),function(b){b.onclick=function(){try{localStorage.setItem("wl_theme",b.getAttribute("data-t"))}catch(e){}applyTheme();settings()}})}
 function home(){view=null;$("back").hidden=true;$("sub").textContent="Full body split";
  var h='<div class="toprow"><button class="charbtn" id="chb"><img src="'+CH[charId()].img+'" alt=""><span>Choose your character</span></button><button class="btn" id="new">+ New week</button></div><div id="nw"></div>';var ws=sorted();
