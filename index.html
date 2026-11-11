@@ -112,7 +112,7 @@ function menu(){var cur=charId(),ov=$("ov");
 function theme(){try{var t=localStorage.getItem("wl_theme");if(t==="light"||t==="dark")return t}catch(e){}return"auto"}
 function applyTheme(){var t=theme(),r=document.documentElement;if(t==="auto")r.removeAttribute("data-theme");else r.setAttribute("data-theme",t)}
 function settings(){var cur=theme(),ov=$("ov");
- $("mn").innerHTML='<h4>Settings</h4><div class="sec">THEME</div><div class="opts">'+[["light","Light"],["dark","Dark"],["auto","Auto"]].map(function(o){return'<button class="opt'+(o[0]===cur?" on":"")+'" data-t="'+o[0]+'"><b>'+o[1]+'</b></button>'}).join("")+'</div><p class="hint">Auto follows your phone setting.</p>';
+ $("mn").innerHTML='<h4>Settings</h4><div class="sec">THEME</div><div class="opts">'+[["light","Light"],["dark","Dark"],["auto","Auto"]].map(function(o){return'<button class="opt'+(o[0]===cur?" on":"")+'" data-t="'+o[0]+'"><b>'+o[1]+'</b></button>'}).join("")+'</div><p class="hint">Auto follows your device settings.</p>';
  showOv();ov.onclick=function(e){if(e.target===ov)closeOv()};
  Array.prototype.forEach.call($("mn").querySelectorAll(".opt"),function(b){b.onclick=function(){try{localStorage.setItem("wl_theme",b.getAttribute("data-t"))}catch(e){}applyTheme();settings()}})}
 function anim(c){var a=$("app");a.classList.remove("in-f","in-b");void a.offsetWidth;a.classList.add(c);setTimeout(function(){a.classList.remove(c)},300)}
