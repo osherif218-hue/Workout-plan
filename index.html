@@ -78,9 +78,9 @@ input{font:inherit;color:var(--ink);background:var(--inp);border:1px solid var(-
 <div id="ins" class="ins" hidden></div><main id="app"></main><div class="ov" id="ov" hidden><div class="menu" id="mn"></div></div><div class="sv" id="sv">Saved</div>
 <script>
 var PLAN={
-A:{n:"Full Body A",rest:"1 rest day",ex:[["DB lateral raises",2,2],["DB Flat Chest Press",3,1],["T-Bar Row",2,1],["Cable Rear Delt fly",1,1],["WG lat pulldown",1,1],["SA Triceps Pushdown",1,1],["Face Away curl",1,1],["Leg Press",3,1],["Seated leg curl",1,1],["Shoulder Press",1,1]]},
-B:{n:"Full Body B",rest:"2 rest days",ex:[["SA Cable lateral raises",2,1],["T-Bar Row",2,1],["Cable Rear Delt fly",1,1],["Inclined chest press machine",2,1],["NG Lat row",1,1],["Overhead Triceps extension",2,2],["Face away curl",2,1],["Wide chest press machine",2,1],["WG lat pulldown",2,1],["Leg Extension",2,1],["Seated leg curl",1,2],["Leg press calf raises",2,2],["Smith shrugs",1,1]]},
-C:{n:"Full Body C",rest:"1 rest day",ex:[["SA Cable lateral raises",2,1],["DB Flat Chest Press",3,1],["T-Bar Row",2,1],["DB biceps curl",1,2],["NG Lat row",1,1],["SA Triceps Pushdown",1,1],["Leg press calf raises",1,1],["Leg extension",2,1],["Seated leg curl",2,1],["reverse curl",0,1],["wrist curl",0,1]]}};
+A:{n:"Full Body A",rest:"1 rest day",ex:[["DB lateral raises",2,1],["DB Flat Chest Press",3,1],["T-Bar Row",2,1],["Cable Rear Delt fly",1,1],["WG lat pulldown",1,1],["SA Triceps Pushdown",1,1],["Face Away curl",1,1],["Leg Press",3,1],["Seated leg curl",1,1],["Shoulder Press",1,1]]},
+B:{n:"Full Body B",rest:"2 rest days",ex:[["SA Cable lateral raises",2,2],["T-Bar Row",2,1],["Inclined chest press machine",2,1],["NG Lat row",1,1],["Overhead Triceps extension",2,2],["Face away curl",2,1],["Wide chest press machine",2,1],["WG lat pulldown",2,1],["Leg Extension",2,1],["Seated leg curl",1,2],["Leg press calf raises",2,2],["Smith shrugs",1,1]]},
+C:{n:"Full Body C",rest:"1 rest day",ex:[["DB lateral raises",2,1],["DB Flat Chest Press",3,1],["T-Bar Row",2,1],["Cable Rear Delt fly",1,1],["DB biceps curl",1,2],["NG Lat row",1,1],["SA Triceps Pushdown",1,1],["Leg press calf raises",1,1],["Leg extension",2,1],["Seated leg curl",2,1],["reverse curl",0,1],["wrist curl",0,1]]}};
 var OFF={A:0,B:2,C:5},KEYS=["A","B","C"],LS="wl_state_v1";
 var S={weeks:[],t:0},view=null,tab="A",dbDoc=null,timer=null;
 var app=document.getElementById("app");
@@ -148,7 +148,9 @@ function draw(){var w=wk(view),d=w.days[tab],P=PLAN[tab];
  Array.prototype.forEach.call(app.querySelectorAll(".ex input"),function(inp){inp.oninput=function(){var i=inp.getAttribute("data-i");d.ex[i]=d.ex[i]||{};d.ex[i][inp.getAttribute("data-f")]=inp.value;save()}});
  $("del").onclick=function(){if(confirm("Delete the week of "+fmt(w.start)+"?")){S.weeks=S.weeks.filter(function(o){return o.id!==w.id});save();goHome()}}}
 $("back").onclick=goHome;$("gear").onclick=settings;applyTheme();
-function migrate(){if((S.v||0)>=2)return;S.weeks.forEach(function(w){var d=w.days&&w.days.A;if(d&&d.ex){if(d.ex[10]!==undefined)d.ex[9]=d.ex[10];else delete d.ex[9];delete d.ex[10]}});S.v=2;try{localStorage.setItem(LS,JSON.stringify(S))}catch(e){}}
+function migrate(){if((S.v||0)<2){S.weeks.forEach(function(w){var d=w.days&&w.days.A;if(d&&d.ex){if(d.ex[10]!==undefined)d.ex[9]=d.ex[10];else delete d.ex[9];delete d.ex[10]}});S.v=2}
+ if(S.v<3){var OLD={"A": ["DB lateral raises", "DB Flat Chest Press", "T-Bar Row", "Cable Rear Delt fly", "WG lat pulldown", "SA Triceps Pushdown", "Face Away curl", "Leg Press", "Seated leg curl", "Shoulder Press"], "B": ["SA Cable lateral raises", "T-Bar Row", "Cable Rear Delt fly", "Inclined chest press machine", "NG Lat row", "Overhead Triceps extension", "Face away curl", "Wide chest press machine", "WG lat pulldown", "Leg Extension", "Seated leg curl", "Leg press calf raises", "Smith shrugs"], "C": ["SA Cable lateral raises", "DB Flat Chest Press", "T-Bar Row", "DB biceps curl", "NG Lat row", "SA Triceps Pushdown", "Leg press calf raises", "Leg extension", "Seated leg curl", "reverse curl", "wrist curl"]};S.weeks.forEach(function(w){KEYS.forEach(function(k){var d=w.days&&w.days[k];if(!d||!d.ex)return;var o=OLD[k],nx={},used={};PLAN[k].ex.forEach(function(x,i){for(var j=0;j<o.length;j++)if(o[j].toLowerCase()===x[0].toLowerCase()){if(d.ex[j]){nx[i]=d.ex[j];used[j]=1}break}});o.forEach(function(n,j){if(d.ex[j]&&!used[j])nx["old_"+n]=d.ex[j]});d.ex=nx})});S.v=3}
+ try{localStorage.setItem(LS,JSON.stringify(S))}catch(e){}}
 load();migrate();home();
 try{history.replaceState({v:"home"},"")}catch(e){}
 window.addEventListener("popstate",function(e){
