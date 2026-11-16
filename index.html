@@ -73,8 +73,9 @@ input{font:inherit;color:var(--ink);background:var(--inp);border:1px solid var(-
 @keyframes inb{from{opacity:0;transform:translateX(-20px)}to{opacity:1;transform:none}}
 #app.in-f{animation:inf .26s cubic-bezier(.2,.8,.2,1)}#app.in-b{animation:inb .24s cubic-bezier(.2,.8,.2,1)}
 .empty{text-align:center;color:var(--mut);margin:30px 0}
-.start{position:fixed;inset:0;z-index:15;background:#111827;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:24px}.start[hidden]{display:none}
+.start{position:fixed;inset:0;z-index:15;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:24px}.start[hidden]{display:none}
 .sb{width:100%;max-width:420px;height:88px;border-radius:14px;border:0;background:var(--cy);color:#06222a;font-size:21px;font-weight:700;letter-spacing:.4px;animation:suin .6s cubic-bezier(.2,.8,.2,1) both}.sb:active{filter:brightness(.92)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .start{background:#111827}}:root[data-theme="dark"] .start{background:#111827}
 @keyframes suin{from{opacity:0;transform:translateY(46px)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion:reduce){.sb{animation:none!important}}
 </style></head><body>
