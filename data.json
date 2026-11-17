@@ -498,6 +498,26 @@
     "526/480"
    ]
   },
-  "omar": {}
+  "omar": {},
+  "dardiry": {
+   "smith shrugs": [
+    "dardiry-smith-shrugs-8129772-down.png",
+    "dardiry-smith-shrugs-8129772-up.png",
+    "113px",
+    "362/480"
+   ],
+   "shoulder press": [
+    "dardiry-shoulder-press-8146611-down.png",
+    "dardiry-shoulder-press-8146611-up.png",
+    "109px",
+    "348/480"
+   ],
+   "t-bar row": [
+    "dardiry-t-bar-row-8196615-down.png",
+    "dardiry-t-bar-row-8196615-up.png",
+    "146px",
+    "467/480"
+   ]
+  }
  }
 }
