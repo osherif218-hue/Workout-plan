@@ -711,6 +711,18 @@
     "jamal-reverse-curl-46034-up.png",
     "103px",
     "331/480"
+   ],
+   "wrist curl": [
+    "jamal-wrist-curl-165494-down.png",
+    "jamal-wrist-curl-165494-up.png",
+    "116px",
+    "370/480"
+   ],
+   "face away curl": [
+    "jamal-face-away-curl-901053-down.png",
+    "jamal-face-away-curl-901053-up.png",
+    "100px",
+    "320/480"
    ]
   }
  }
